@@ -21,4 +21,4 @@ after_success:
 - docker push crownley/multi-client
 - docker push crownley/multi-nginx
 - docker push crownley/multi-server
-- docker push rownely/multi-worker
+- docker push crownley/multi-worker
