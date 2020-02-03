@@ -12,7 +12,7 @@ after_success:
     - docker build -t crownley/multi-client ./client
     - docker build -t crownley/multi-nginx ./nginx
     - docker build -t crownley/multi-server ./server
-    - docker build -t crownely/multi-worker ./worker
+    - docker build -t crownley/multi-worker ./worker
 
 # Log in to the docker CLI
 -echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
