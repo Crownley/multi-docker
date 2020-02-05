@@ -1,63 +1,37 @@
 sudo: required
 
 services:
-
   - docker
 
-
 before_install:
-
   - docker build -t "$DOCKER_ID"/react-client-test -f ./client/Dockerfile.dev ./client
-
-
 script:
-
   - docker run "$DOCKER_ID"/react-client-test npm test -- --coverage
 
-
 after_success:
-
   - docker build -t "$DOCKER_ID"/complex-client ./client
-
   - docker build -t "$DOCKER_ID"/complex-nginx -f ./nginx/Dockerfile.dev ./nginx
-
   - docker build -t "$DOCKER_ID"/complex-server ./server
-
   - docker build -t "$DOCKER_ID"/complex-worker ./worker
 
   # Login into docker hub
-
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
 
   # push images to docker hub
-
   - docker push "$DOCKER_ID"/complex-client
-
   - docker push "$DOCKER_ID"/complex-nginx
-
   - docker push "$DOCKER_ID"/complex-server
-
   - docker push "$DOCKER_ID"/complex-worker
 
-# sudo: required
-# services:
-#     - docker
-
-# before_install:
-#     - docker build -t crownley/react-test -f ./client/Dockerfile.dev ./client
-
-# script:
-#     - docker run -e CI=true crownley/react-test npm test
-
-# after_success:
-#     - docker build -t crownley/multi-client ./client
-#     - docker build -t crownley/multi-nginx ./nginx
-#     - docker build -t crownley/multi-server ./server
-#     - docker build -t crownley/multi-worker ./worker
-# # Log in to the docker CLI
-#     - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
-# # Take those images and push them to docker hub
-#     - docker push crownley/multi-client
-#     - docker push crownley/multi-nginx
-#     - docker push crownley/multi-server
-#     - docker push crownley/multi-worker
+deploy: 
+  edge: true
+  provider: elasticbeanstalk
+  region: us-east-2
+  app: multi-docker
+  env: MultiDocker-env
+  bucket_name: elasticbeanstalk-us-east-2-858984199263
+  bucket_path: docker-multi
+  on: 
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key: $AWS_SECRET_KEY
